@@ -55,11 +55,14 @@ app:
   awsAccessKeyId: ""
   awsSecretAccessKey: ""
 
+  aliAccessKeyId: ""
+  aliSecretAccessKey: ""
+  aliOssEndpoint: ""
+  aliOssRegion: ""
+
   azureStorageAccessKey: ""
   azureStorageAccountName: ""
 
   googleJson: ""
 
 secretName: ""
-
-

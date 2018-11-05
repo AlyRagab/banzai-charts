@@ -1,0 +1,33 @@
+{{- $schema := .Values.app.cloudProvider }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-spark-hs-config
+data:
+  spark-defaults.conf: |-
+    {{- if .Values.app.logDirectory }}
+
+    {{- if eq $schema "amazon" }}
+
+    spark.hadoop.fs.s3a.access.key=$AWS_ACCESS_KEY_ID
+    spark.hadoop.fs.s3a.secret.key=$AWS_SECRET_ACCESS_KEY
+
+    {{- else if eq $schema "alibaba" }}
+
+    spark.hadoop.fs.oss.accessKeyId=$ALIBABA_ACCESS_KEY_ID
+    spark.hadoop.fs.oss.accessKeySecret=$ALIBABA_ACCESS_KEY_SECRET
+    spark.hadoop.fs.oss.impl=org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem
+    spark.hadoop.fs.oss.endpoint={{ default (printf "oss-%s.aliyuncs.com" .Values.app.aliOssRegion) .Values.app.aliOssEndpoint }}
+
+    {{- else if eq $schema "azure" }}
+
+    spark.hadoop.fs.azure.account.key.$AZURE_STORAGE_ACCOUNT_NAME.blob.core.windows.net=$AZURE_STORAGE_ACCESS_KEY
+
+    {{- else if eq $schema "google" }}
+
+    spark.hadoop.google.cloud.auth.service.account.enable=true
+    spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/spark/conf/secret/google.json
+
+    {{- end }}
+
+    {{- end }}
